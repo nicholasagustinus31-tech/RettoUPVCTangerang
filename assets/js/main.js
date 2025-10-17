@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   initCaptcha();
+  initFaq();
 });
 
 function initCaptcha() {
@@ -84,5 +85,47 @@ function initCaptcha() {
     } else {
       errorBox.style.display = 'none';
     }
+  });
+}
+
+function initFaq() {
+  const toggles = document.querySelectorAll('[data-faq-toggle]');
+
+  if (!toggles.length) return;
+
+  const updateAnswerHeight = button => {
+    const answer = button.nextElementSibling;
+    if (!answer) return;
+
+    if (button.getAttribute('aria-expanded') === 'true') {
+      answer.classList.add('is-open');
+      button.classList.add('is-open');
+      answer.style.maxHeight = `${answer.scrollHeight}px`;
+    } else {
+      answer.style.maxHeight = '0px';
+      answer.classList.remove('is-open');
+      button.classList.remove('is-open');
+    }
+  };
+
+  toggles.forEach(button => {
+    const answer = button.nextElementSibling;
+    if (!answer) return;
+
+    answer.style.maxHeight = '0px';
+
+    button.addEventListener('click', () => {
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', (!isExpanded).toString());
+      updateAnswerHeight(button);
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    toggles.forEach(button => {
+      if (button.getAttribute('aria-expanded') === 'true') {
+        updateAnswerHeight(button);
+      }
+    });
   });
 }
